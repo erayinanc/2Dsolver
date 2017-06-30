@@ -1,21 +1,24 @@
 %% 2Dsolver 
 % 2D solver with primitive pressure correction
-% by Eray Inanc
-% CFL 0.2, D = 2e-5, dx=2e-3, epsMax=1e-3 is all right for jets
+% by Eray Inanc on 30.06.17 13:07
+% 4 convection schemes are included
+% The divergence field for poressure correction is computed either ... 
+% cell centers or cell faces
+% Def: CFL 0.2, D = 2e-5, dx=2e-3, epsMax=1e-3 is all right for jets
 clear;clc;clf;
 
 %% parameters run
 u           = 1;            % axial velocity
 v           = 0;            % radial velocity
-rjet        = 10;            % jet annulus radius
+rjet        = 10;           % jet annulus radius
 CFL         = 0.2;          % timestep condition
 tmax        = 10.0;         % max val of t
 D           = 2e-5;         % viscosity
 rho         = 1.2;          % density
 
 %% parameters net 
-Ima         = 100;           % axial points
-Jma         = 100;           % radial points
+Ima         = 100;          % axial points
+Jma         = 100;          % radial points
 dx          = 2e-4;         % spacing between points
 nG          = 1;            % ghost cells (depending on the scheme)
 
@@ -23,7 +26,7 @@ nG          = 1;            % ghost cells (depending on the scheme)
 % 0:vertical / 1:sin / 2:jet / 3:jet-filled / 4:vortical
 vprofile    = 3;            % Initial momentum          
 pprofile    = 0;            % Initial passive scalar 0:left / 1:middle
-iniTurb     = false;         % Random turbulence at inlet
+iniTurb     = true;         % Random turbulence at inlet
 
 %% parameters scheme
 % 0:cds / 1:uds / 2:dds / 3:udcds 
@@ -211,8 +214,6 @@ for n=1:round(tmax/dt)
 
         bx = gcf; bx.Color = [1 1 1]; bx.Resize = 'off'; bx.ToolBar = 'none'; bx.MenuBar = 'none';
         bx.Position = figPos;
-
-        pause(dt/10000);
     end
 
     % check the stop button
@@ -258,3 +259,4 @@ if postProcEnd
     
     shg;
 end
+% END %

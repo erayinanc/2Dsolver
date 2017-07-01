@@ -2,7 +2,7 @@
 % 2D solver with primitive pressure correction
 % by Eray Inanc on 30.06.17 13:07
 % 4 convection schemes are included
-% The divergence field for poressure correction is computed either ... 
+% The divergence field for pressure correction is computed either ... 
 % cell centers or cell faces
 % Def: CFL 0.2, D = 2e-5, dx=2e-3, epsMax=1e-3 is all right for jets
 clear;clc;clf;

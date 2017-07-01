@@ -1,6 +1,6 @@
 %% PoissonSolver
 %  Solve (approximately) the Poisson equation for the pressure correction.
-%  Find a field p such that div(grad(p)) = div
+%  Find a field p such that div(grad(p)) = div(u)
 
 function [p,nIt,eps]=PoissonSolver(div,rhoPhi,rho,dt,dx,omega,nItMax,epsMax) 
     % Initialisation

@@ -46,11 +46,12 @@ momBC       = [2,2,2,0];    % Momentum BCs / E / W / N / S
 psiBC       = [3,3,2,0];    % Scalar BCs     E / W / N / S
 fixedValMom = [0,0,0,0];    % fixed value for Momentum at BC if momBC=1
 fixedVal    = [0,0,0,0];    % fixed value for Scalar at BC if psiBC=1
+
 %% post processing options
 postProc    = true;         % see fields on the run
 postProcEnd = true;         % see fields at the end
 postOut     = 100;          % output every postOut step
-figPos      = [0 1000 2400 800]; % figure position
+figPos      = [0 500 1200 400]; % figure position
 
 %% initialise and create class of Phi elements
 [rhoPhi.rhoU, rhoPhi.rhoV, rhoPhi.rhoPsi] = ...
@@ -70,6 +71,7 @@ end
 % Ifim - Ifi - Ifip - .......- Ilam - Ila - Ilap (Ifim/Ilap ghost cells)
 Ifim=1; Ifi=nG+1; Ifip=Ifi+1; Ilam= Ima; Ila=Ima+nG; Ilap=Ila+nG;
 Jfim=1; Jfi=nG+1; Jfip=Jfi+1; Jlam= Jma; Jla=Jma+nG; Jlap=Jla+nG;
+
 %% main program
 % stop button to end the loop
 h = uicontrol('Style', 'PushButton', 'String', 'Stop', ...
@@ -104,21 +106,21 @@ for n=1:round(tmax/dt)
     if iniTurb; rhoPhiP.rhoV(Ifim,:) = 0.5*(rand(1,Jma+2*nG)-0.5).*iniU(1,:); end;
 
     % update t, nt and dt
-    t = t + dt;
-    nt = nt + 1;
-    dt = CFL*dx/max(max(max(rhoPhiP.rhoU,rhoPhiP.rhoV))); 
+    t   = t + dt;
+    nt  = nt + 1;
+    dt  = CFL*dx/max(max(max(rhoPhiP.rhoU,rhoPhiP.rhoV))); 
           
     % Calculate divergence inside domain
     switch(divP)
         case 0 
             [fluxUP,fluxVP] = mom2vel(rhoPhiP.rhoU,rhoPhiP.rhoV,rho);
-            [div]=calcDivergenceFlux(fluxUP,fluxVP);
+            [div] = calcDivergenceFlux(fluxUP,fluxVP);
         case 1 
-            [div]=calcDivergence(rhoPhiP.rhoU,rhoPhiP.rhoV);
+            [div] = calcDivergence(rhoPhiP.rhoU,rhoPhiP.rhoV);
     end
 
     % Poisson solver
-    [p,nIt,eps]=PoissonSolver(div,rhoPhiP,rho,dt,dx,omega,nItMax,epsMax); 
+    [p,nIt,eps] = PoissonSolver(div,rhoPhiP,rho,dt,dx,omega,nItMax,epsMax); 
 
     % apply pseudo pressure to predicted mom
     rhoPhi.rhoU(Ifi:Ila,Jfi:Jla) = rhoPhiP.rhoU(Ifi:Ila,Jfi:Jla) - ...
@@ -133,7 +135,7 @@ for n=1:round(tmax/dt)
     % 1:E / 2:W / 3:N / 4:S
     for bc= 1:4; 
         switch(momBC(bc)); 
-            case 1
+            case 1 % Dirichlet (fixed)
                 for ii = 1:2;
                     str = [arrayTab{ii}];
                     if bc==1; rhoPhi.(str)(:,Jfim) = fixedValMom(bc); end;
@@ -141,7 +143,7 @@ for n=1:round(tmax/dt)
                     if bc==3; rhoPhi.(str)(Ilap,:) = fixedValMom(bc); end;
                     if bc==4; rhoPhi.(str)(Ifim,:) = fixedValMom(bc); end;
                 end
-            case 2
+            case 2 % Neumann (0 grad)
                 for ii = 1:2;
                     str = [arrayTab{ii}];
                     if bc==1; rhoPhi.(str)(:,Jfim) = rhoPhi.(str)(:,Jfi); end;
@@ -149,7 +151,7 @@ for n=1:round(tmax/dt)
                     if bc==3; rhoPhi.(str)(Ilap,:) = rhoPhi.(str)(Ila,:); end;
                     if bc==4; rhoPhi.(str)(Ifim,:) = rhoPhi.(str)(Ifi,:); end;
                 end
-            case 3
+            case 3 % Periodic (use in pairs)
                 for ii = 1:2;
                     str = [arrayTab{ii}];
                     if bc==1; rhoPhi.(str)(:,Jfim) = rhoPhi.(str)(:,Jla); end;
@@ -159,24 +161,23 @@ for n=1:round(tmax/dt)
                 end
         end
         switch(psiBC(bc)); 
-            case 1
+            case 1 % Dirichlet (fixed)
                     if bc==1; rhoPhi.rhoPsi(:,Jfim) = fixedVal(bc); end;
                     if bc==2; rhoPhi.rhoPsi(:,Jlap) = fixedVal(bc); end;
                     if bc==3; rhoPhi.rhoPsi(Ilap,:) = fixedVal(bc); end;               
                     if bc==4; rhoPhi.rhoPsi(Ifim,:) = fixedVal(bc); end;
-            case 2
+            case 2 % Neumann (0 grad)
                     if bc==1; rhoPhi.rhoPsi(:,Jfim) = rhoPhi.(str)(:,Jfi); end;
                     if bc==2; rhoPhi.rhoPsi(:,Jlap) = rhoPhi.(str)(:,Jla); end;
                     if bc==3; rhoPhi.rhoPsi(Ilap,:) = rhoPhi.(str)(Ila,:); end;               
                     if bc==4; rhoPhi.rhoPsi(Ifim,:) = rhoPhi.(str)(Ifi,:); end;
-            case 3
+            case 3 % Periodic (use in pairs)
                     if bc==1; rhoPhi.rhoPsi(:,Jfim) = rhoPhi.(str)(:,Jla); end;
                     if bc==2; rhoPhi.rhoPsi(:,Jlap) = rhoPhi.(str)(:,Ifi); end;
                     if bc==3; rhoPhi.rhoPsi(Ilap,:) = rhoPhi.(str)(Ifi,:); end;               
                     if bc==4; rhoPhi.rhoPsi(Ifim,:) = rhoPhi.(str)(Ila,:); end;
         end
-    end
-        
+    end    
 
     % Cut backflow 
     rhoPhi.rhoU(Ilap,:) = max(0,rhoPhi.rhoU(Ila,:));
@@ -186,7 +187,8 @@ for n=1:round(tmax/dt)
         xx = linspace(-round(Jma/2),round(Jma/2),Jma+2*nG)*dx;
         yy = linspace(0,Ima+2*nG,Ima+2*nG)*dx;
     
-        ax1 = subplot(1,3,1); %#ok<*UNRCH>
+        % Transported scalar
+        ax1 = subplot(1,3,1); 
         contourf(ax1,xx,yy,rhoPhi.rhoPsi,'LineStyle','none','LevelStep',.1);
         title({['\itnt = ',num2str(nt)]});
         xlabel({'mm','Psi'});
@@ -195,6 +197,7 @@ for n=1:round(tmax/dt)
         ax1.CLim = [0,1];
         axis equal;
 
+        % Axial velocity
         ax2 = subplot(1,3,2);
         contourf(ax2,xx,yy,rhoPhi.rhoU,'LineStyle','none','LevelStep',.1);
         title({['\itt = ',num2str(t),'ms']});
@@ -204,14 +207,17 @@ for n=1:round(tmax/dt)
         ax2.CLim = [min(min(rhoPhi.rhoU)),max(max(rhoPhi.rhoU))];
         axis equal;
         
+        % Div. field
         ax3 = subplot(1,3,3);
         contourf(ax3,xx,yy,div,'LineStyle','none','LevelStep',.1); colorbar;
         xlabel({'mm','div U_{pred}'});
         colorbar; 
         axis equal;
-        
+
+        % Update plots
         shg;
 
+        % Plot position
         bx = gcf; bx.Color = [1 1 1]; bx.Resize = 'off'; bx.ToolBar = 'none'; bx.MenuBar = 'none';
         bx.Position = figPos;
     end
@@ -231,7 +237,8 @@ end;
 if postProcEnd
     xx = linspace(-round(Jma/2),round(Jma/2),Jma+2*nG)*dx;
     yy = linspace(0,Ima+2*nG,Ima+2*nG)*dx;
-    
+   
+    % Transported scalar
     ax1 = subplot(1,3,1); %#ok<UNRCH>
     contourf(ax1,xx,yy,rhoPhi.rhoPsi,'LineStyle','none','LevelStep',.1);
     title({['\itnt = ',num2str(nt)]});
@@ -241,7 +248,8 @@ if postProcEnd
     colormap(ax1,'hot')
     ax1.CLim = [0,1];
     axis equal;
-    
+   
+    % Axial velocity
     ax2 = subplot(1,3,2);
     contourf(ax2,xx,yy,rhoPhi.rhoU,'LineStyle','none','LevelStep',.1);
     title({['\itt = ',num2str(t),'ms']});
@@ -251,6 +259,7 @@ if postProcEnd
     ax2.CLim = [min(min(rhoPhi.rhoU)),max(max(rhoPhi.rhoU))];
     axis equal;
     
+    % Div. field
     ax3 = subplot(1,3,3);
     contourf(ax3,xx,yy,div,'LineStyle','none','LevelStep',.1); colorbar;
     xlabel({'mm','div U_{pred}'});

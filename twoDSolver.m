@@ -1,6 +1,6 @@
 %% 2Dsolver 
 % 2D solver with primitive pressure correction
-% by Eray Inanc on 30.06.17 13:07
+% by Eray Inanc (eray.inanc@uni-due.de)
 % 4 convection schemes are included
 % The divergence field for pressure correction is computed either ... 
 % cell centers or cell faces

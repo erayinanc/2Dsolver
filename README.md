@@ -1,4 +1,6 @@
-# 2Dsolver
-Matlab 2D low mach LES solver
+# TwoDSolverMatlab
+Matlab 2D low mach flow-solver
 
-contact eray.inanc@uni-due.de for questions
+No additional toolboxes are needed
+
+Contact eray.inanc@uni-due.de for questions

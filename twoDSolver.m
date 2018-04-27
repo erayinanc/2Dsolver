@@ -4,7 +4,7 @@
 % 4 convection schemes are included
 % The divergence field for pressure correction is computed either ... 
 % cell centers or cell faces
-% Def: CFL 0.2, D = 2e-5, dx=2e-3, epsMax=1e-3 is all right for jets
+% Def: CFL 0.2, D = 2e-5, dx=2e-3, epsMax=1e-3 is working for jets
 clear;clc;clf;
 
 %% parameters run

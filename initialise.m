@@ -1,6 +1,8 @@
 %% initialisation of fields
 % different cases are defined here for scalars
-function [ RhoU, RhoV, phi] = initialise( u, v, JJet, Ima, Jma, nG, vprofile, pprofile )
+function [ RhoU, RhoV, phi] = initialise( u, v, JJet, vprofile, pprofile )
+    global Ima Jma nG Jmid ;
+
     % Boundary conditions
     dom = zeros(Ima+2*nG,Jma+2*nG);
     % velocities
@@ -16,19 +18,19 @@ function [ RhoU, RhoV, phi] = initialise( u, v, JJet, Ima, Jma, nG, vprofile, pp
         case 2 % jet flow
             RhoU = dom.*0;
             RhoV = dom+v;
-            Jmidm=Jma/2; Jmidp=Jmidm+1;
+            Jmidp=Jmid+1;
             
             RhoU(1:2,:) = 0.0*u;
-            RhoU(1:2,Jmidm-floor(JJet/2)-1:Jmidp+ceil(JJet/2)+1) = 0.5*u;
-            RhoU(1:2,Jmidm-floor(JJet/2):Jmidp+ceil(JJet/2)) = 1.0*u;
+            RhoU(1:2,Jmid-floor(JJet/2)-1:Jmidp+ceil(JJet/2)+1) = 0.5*u;
+            RhoU(1:2,Jmid-floor(JJet/2):Jmidp+ceil(JJet/2)) = 1.0*u;
         case 3 % jet flow-filled
             RhoU = dom.*0;
             RhoV = dom+v;
-            Jmidm=Jma/2; Jmidp=Jmidm+1;
+            Jmidp=Jmid+1;
             
             RhoU(1:2,:) = 0.0*u;
-            RhoU(1:end,Jmidm-floor(JJet/2)-1:Jmidp+ceil(JJet/2)+1) = 0.5*u;
-            RhoU(1:end,Jmidm-floor(JJet/2):Jmidp+ceil(JJet/2)) = 1.0*u;
+            RhoU(1:end,Jmid-floor(JJet/2)-1:Jmidp+ceil(JJet/2)+1) = 0.5*u;
+            RhoU(1:end,Jmid-floor(JJet/2):Jmidp+ceil(JJet/2)) = 1.0*u;
         case 4 % vortical flow
             RhoU = dom.*0;
             RhoV = dom.*0;

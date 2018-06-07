@@ -1,11 +1,10 @@
 %% calcDivergenceFlux
 %  calculates the divergence of the velocity field from velocity flux, div = du/dx + dv/dy
+function [div]=calcDivergenceFlux(fluxU,fluxV,rho)
+    global Ima Jma dx nG Ifim Ifi Ilam Ila Jfim Jfi Jlam Jla ;
 
-function [div]=calcDivergenceFlux(fluxU,fluxV)
-    % Initialisation
-    [Ima,~] = size(fluxU);
-    [~,Jma] = size(fluxV);
-    div = zeros(Ima+1,Jma+1);
-    div(2:Ima-1,2:Jma-1) = ( fluxU(2:Ima-1,2:Jma-1)-fluxU(1:Ima-2,2:Jma-1)...
-                           + fluxV(2:Ima-1,2:Jma-1)-fluxV(2:Ima-1,1:Jma-2));
+    % Calculation
+    div = zeros(Ima+2*nG,Jma+2*nG);
+    div(Ifi:Ila,Jfi:Jla) = 0.5*dx*rho*( fluxU(Ifi:Ila,Jfi:Jla) - fluxU(Ifim:Ilam,Jfi:Jla)...
+                                      + fluxV(Ifi:Ila,Jfi:Jla) - fluxV(Ifi:Ila,Jfim:Jlam) );
 end

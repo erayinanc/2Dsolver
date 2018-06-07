@@ -3,7 +3,7 @@
 %  a conserved scalar field Phi from the fluxes U and V 
 %  with different schemes, DDS will never work!
 function [fluxConX,fluxConY]=calcFluxCon(Phi,fluxU,fluxV,dt,scheme)
-    global Ima Jma dx Ifim Ifi Ila Ilap Jfim Jfi Jla Jlap;
+    global dx Ifim Ifi Ila Ilap Jfim Jfi Jla Jlap;
 
     % Calculation
     switch(scheme)

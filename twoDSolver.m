@@ -30,8 +30,8 @@ iniTurb     = true;         % Random turbulence at inlet
 
 %% parameters scheme
 % 0:cds / 1:uds / 2:dds / 3:udcds 
-schemePsi   = 3;            % Passive scalars
-schemeVel   = 3;            % Momentum
+schemePsi   = 1;            % Passive scalars
+schemeVel   = 0;            % Momentum
 scheme      = [schemePsi,schemeVel,schemeVel];
 
 %% pressure corrections options
@@ -116,7 +116,7 @@ for n=1:round(tmax/dt)
             [fluxUP,fluxVP] = mom2vel(rhoPhiP.rhoU,rhoPhiP.rhoV,rho);
             [div] = calcDivergenceFlux(fluxUP,fluxVP);
         case 1 
-            [div] = calcDivergence(rhoPhiP.rhoU,rhoPhiP.rhoV);
+            [div] = calcDivergence(rhoPhiP.rhoU/rho,rhoPhiP.rhoV/rho);
     end
 
     % Poisson solver
